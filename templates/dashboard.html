@@ -5,7 +5,7 @@
 <hr />
 
 <div class="row">
-  {% if orders %} {% for id in orders.keys() %}
+  {% if orders %} {% for id in orders[keys] %}
   <div class="col-4" id="print_{{id}}">
     <div class="card m-2 overflow-scroll" style="height: 20rem">
       <div class="card-body">
@@ -24,7 +24,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in orders[id].order %} {% if 'entry_fee' in item.keys()
+            {% for item in orders[id].order %} {% if 'entry_fee' in item[keys]
             %}
             <tr>
               <th scope="row">{{loop.index}}</th>
@@ -49,16 +49,10 @@
           Print
         </button>
         <button class="btn btn-success">
-          <a
-            class="text-white text-decoration-none"
-            href="{{url_for('checkout_order', order_id=id)}}"
-            >Checkout
+          <a class="text-white text-decoration-none" href="{{url_for('checkout_order', order_id=id)}}">Checkout
           </a>
         </button>
-        <a
-          class="text-black text-decoration-none"
-          href="{{url_for('add_product', order_id=id)}}"
-        >
+        <a class="text-black text-decoration-none" href="{{url_for('add_product', order_id=id)}}">
           <button class="btn btn-outline-secondary">&plus;</button>
         </a>
       </div>

@@ -19,7 +19,7 @@
             >
               <option selected>Select Category</option>
 
-              <option value="Pizza" id="opt1">Pizza</option>
+              <option value="Pizza">  Pizza</option>
               <option value="Maggi">Maggi</option>
               <option value="Wraps">Wraps</option>
               <option value="Grill Sandwiches">Grill Sandwiches</option>
@@ -93,7 +93,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in menu.keys() %}
+            {% for item in menu[keys] %}
             <tr>
               <th scope="row">{{loop.index}}</th>
               <td>{{menu[item].name}}</td>

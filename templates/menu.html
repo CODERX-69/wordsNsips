@@ -109,7 +109,7 @@
                 aria-expanded="false"
                 aria-controls="toggle_{{loop.index}}"
               >
-                {{category}}
+              <img src="/static/images/burger.jfif" alt="" style="height: 50px; width: 50px; margin-right: 20px;"> {{category}} 
               </button>
             </h2>
             <div
@@ -118,7 +118,7 @@
               aria-labelledby="items_{{loop.index}}"
               data-bs-parent="#menuItems"
             >
-              <div class="accordion-body"  style="background-image: url(/static/images/burger.jfif);">
+              <div class="accordion-body">
                 <ul class="row">
                   {% for item in menu.keys() %} {% if menu[item].category
                   ==category %}
@@ -126,8 +126,8 @@
                     <div class="card m-2 rounded-lg p-2">
                       <div class="card-body" >
 
-                        <span class="d-flex justify-content-between" >
-                          {{menu[item].name}}
+                        <span class="d-flex justify-content-between" style="align-items: center;" >
+                          <img src="/static/images/sandwitch.jfif" alt="" style="height: 40px; width: 50px;"> {{menu[item].name}} 
                           <span>
                             <button class="btn btn-sm">
                               <a
