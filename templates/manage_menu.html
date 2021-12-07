@@ -1,4 +1,3 @@
-
 {% extends "layout.html" %} {% block body %}
 
 <h1>Manage menu</h1>
@@ -11,12 +10,10 @@
       <div class="card-body">
         <form action="{{url_for('manage_menu')}}" method="POST">
           <div class="mb-3">
-            <label for="Category" class="form-label"><center>Category</center></label>
-            <select
-              name="category"
-              class="form-select"
-              id="Category"
-              aria-label="Default select example">
+            <label for="Category" class="form-label">
+              <center>Category</center>
+            </label>
+            <select name="category" class="form-select" id="Category" aria-label="Default select example">
 
               <option selected>Select Category</option>
 
@@ -42,37 +39,20 @@
 
           <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Item Name</label>
-            <input
-              name="item_name"
-              type="text"
-              class="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="namehelp"
-            />
+            <input name="item_name" type="text" class="form-control" id="exampleInputEmail1"
+              aria-describedby="namehelp" />
             <div id="namehelp" class="form-text">
               Avoid entering numbers and special characters in product name
             </div>
           </div>
           <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label"
-              >Item Price</label
-            >
-            <input
-              name="price"
-              type="number"
-              class="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="namehelp"
-            />
+            <label for="exampleInputEmail1" class="form-label">Item Price</label>
+            <input name="price" type="number" class="form-control" id="exampleInputEmail1"
+              aria-describedby="namehelp" />
           </div>
 
           <div class="mb-3 form-check">
-            <input
-              name="active_status"
-              type="checkbox"
-              class="form-check-input"
-              id="exampleCheck1"
-            />
+            <input name="active_status" type="checkbox" class="form-check-input" id="exampleCheck1" />
             <label class="form-check-label" for="exampleCheck1">Activate</label>
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
@@ -96,17 +76,14 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in menu[keys] %}
+            {% for item in menu %}
             <tr>
-              <!-- <th scope="row">{{loop.index}}</th> -->
-              <td>{{menu[keys].name}}</td>
-              <td>{{menu[keys].category}}</td>
-              <td>{{menu[keys].price}}</td>
+              <th scope="row">{{loop.index}}</th>
+              <td>{{item.name}}</td>
+              <td>{{item.category}}</td>
+              <td>{{item.price}}</td>
               <td>
-                <i
-                  class="fa fa-trash-alt text-danger"
-                  onclick="delete_menu(`{{item}}`)"
-                ></i>
+                <i class="fa fa-trash-alt text-danger" onclick="delete_menu/(`{{item.menu_id}}`)"></i>
               </td>
             </tr>
             {% endfor %}
@@ -120,10 +97,10 @@
 <script>
   async function delete_menu(item) {
     console.log("hi");
-    const res = await fetch(`/delete_menu/${item}`, {
+    const res_list = await fetch(`/delete_menu/${item}`, {
       method: "GET",
     });
-    const data = await res.json();
+    const data = await res_list.json();
     if (data["success"]) {
       window.location.href = "/manage_menu";
     }

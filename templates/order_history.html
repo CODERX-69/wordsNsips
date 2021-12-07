@@ -52,12 +52,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for item in orders[id].order %} {% if 'entry_fee' in
-                  item[keys] %}
+                  {% for item in orders%} {% if 'entry_fee' in
+                  item %}
                   <tr>
                     <th scope="row">{{loop.index}}</th>
                     <td>Entry Fee</td>
-                    <td>{{orders[id].quantity}}</td>
+                    <td>{{item.quantity}}</td>
                     <td>{{item.entry_fee}}</td>
                   </tr>
                   {% else %}
@@ -71,7 +71,7 @@
                 </tbody>
               </table>
               <div class="d-flex justify-content-between">
-                <span> Total: &#8377; {{orders[id].total}} </span>
+                <span> Total: &#8377; {{item.total}} </span>
                 <a href="{{url_for('delete_order', id=id)}}">
                   <button class="btn text-danger">&cross;</button>
                 </a>

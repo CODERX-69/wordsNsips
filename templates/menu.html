@@ -1,8 +1,4 @@
 
-
-
-
-
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 
@@ -92,13 +88,12 @@
             data-bs-parent="#menuItems">
             <div class="accordion-body">
               <ul class="row">
-                {% for item in menu[keys] %} {% if menu[item].category
-                ==category %}
+                {% for item in menu %} 
                 <li class="col-6">
                   <div class="card m-2 rounded-lg p-2">
                     <div class="card-body">
                       <span class="d-flex justify-content-between">
-                        {{menu[item].name}}
+                        {{item.name}}
                         <span>
                           <button class="btn btn-sm">
                             <a href="{{url_for('add_to_cart', product_id=item)}}">
@@ -111,13 +106,13 @@
                               </i>
                             </a>
                           </button>
-                          &#8377;{{menu[item].price}}
+                          &#8377;{{item.price}}
                         </span>
                       </span>
                     </div>
                   </div>
                 </li>
-                {% endif %} {% endfor %}
+                 {% endfor %}
               </ul>
             </div>
           </div>

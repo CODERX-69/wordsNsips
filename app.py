@@ -88,13 +88,13 @@ def checkin():
 
 @app.route('/menu')
 def menu():
-    menu = mongo.db.menu.find({"active_status": "true"})
+    menu = mongo.db.menu.find()
     categories = []
     # categories = set([menu[item]["category"] for item in menu])
-    # for item in menu:
-    #     categories = set(categories)
-    #     print(menu)
-    return render_template("menu.html", menu=menu, categories=categories)
+    for item in menu:
+        # categories = set(categories)
+        # print(menu)
+        return render_template("menu.html", menu=menu, categories=categories)
 
 
 ################################# triggered When BLUE CART BUTTON is clicked ################
@@ -196,12 +196,15 @@ def manage_menu():
         item_name = request.form.get("item_name")
         active_status = bool(request.form.get("active_status"))
         price = int(request.form.get("price"))
+        menu_id = random.randint(6666, 9999)
         res = mongo.db.menu.insert_one({
-                "active": active_status,
-                "name": item_name,
-                "category": category,
-                "price": price
+            "active": active_status,
+            "name": item_name,
+            "category": category,
+            "price": price,
+            "menu_id" : menu_id
         })
+        # res_list = [(k, v) for k, v in res.items()]
         flash("Product successfully added!", "success")
 
     menu = mongo.db.menu.find()
@@ -252,14 +255,12 @@ def delete_orders():
     return redirect(url_for("order_history"))
 
 
-
 @app.route('/manage_tabs')
 @is_logged_in
 def manage_tabs():
     orders = mongo.db.orders.find({"type": "tab"})
     print(orders)
     return render_template("manage_tabs.html", orders=orders)
-
 
 
 ############ ADMIN LOGOUT #############################
@@ -273,8 +274,6 @@ def logout():
     else:
         flash('You are not Logged in', 'secondary')
         return redirect(url_for('login'))
-
-
 
 
 # @app.route('/remove_from_cart/<string:product_id>')
@@ -363,8 +362,6 @@ def add_product(order_id):
 #     return redirect(url_for("checkout"))
 
 
-
-
 # @app.route('/manage_menu', methods=['GET', 'POST'])
 # def manage_menu():
 #     if request.method == "POST":
@@ -383,15 +380,17 @@ def add_product(order_id):
 #     return render_template("manage_menu.html", menu=menu)
 
 
-# @app.route("/delete_menu/<id>")
-# def delete_menu(id):
-#     print(id)
-#     res = mongo.db.menu.remove({"id": id})
-#     flash("Deleted successfully", "success")
-#     return jsonify({
-#         "success": True
-#     })
+@app.route("/delete_menu/<int:menu_id>")
+def delete_menu(menu_id):
+    print(menu_id)
+    res = mongo.db.menu.remove({"menu_id": menu_id})
+    flash("Deleted successfully", "success")
+    return jsonify({
+        "success": True
+    })
 
+
+# 61af83a6ff535f9da6c67ec4
 
 # @app.route('/checkin', methods=['GET', 'POST'])
 # def checkin():
@@ -446,7 +445,6 @@ def add_product(order_id):
 #     return redirect(url_for("dashboard"))
 
 
-
 # @app.route('/delete_users')
 # def delete_users():
 #     users = mongo.db.users.find()
@@ -479,6 +477,7 @@ def delete_order(_id):
     mongo.db.orders.remove({"_id": _id})
     return redirect(url_for("order_history"))
 
+
 @app.route('/add_member', methods=["POST"])
 def add_member():
     name = request.form.get("name")
@@ -508,7 +507,7 @@ def add_member():
 
 @app.route('/add_to_cart/<string:product_id>')
 def add_to_cart(product_id):
-    item = mongo.db.menu.find_one({"_id": ObjectID(product_id)})
+    item = mongo.db.menu.find_one({"_id": ObjectId(product_id)})
     if "cart" in session:
         product_dict = session["cart"]["products"]
         if product_id in product_dict:
