@@ -97,10 +97,10 @@
 <script>
   async function delete_menu(item) {
     console.log("hi");
-    const res_list = await fetch(`/delete_menu/${item}`, {
+    const res = await fetch(`/delete_menu/${item}`, {
       method: "GET",
     });
-    const data = await res_list.json();
+    const data = await res.json();
     if (data["success"]) {
       window.location.href = "/manage_menu";
     }
