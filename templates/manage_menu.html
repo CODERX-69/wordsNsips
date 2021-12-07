@@ -1,3 +1,4 @@
+
 {% extends "layout.html" %} {% block body %}
 
 <h1>Manage menu</h1>
@@ -10,16 +11,16 @@
       <div class="card-body">
         <form action="{{url_for('manage_menu')}}" method="POST">
           <div class="mb-3">
-            <label for="Category" class="form-label">Category</label>
+            <label for="Category" class="form-label"><center>Category</center></label>
             <select
               name="category"
               class="form-select"
               id="Category"
-              aria-label="Default select example"
-            >
+              aria-label="Default select example">
+
               <option selected>Select Category</option>
 
-              <option value="Pizza">  Pizza</option>
+              <option value="Pizza">Pizza</option>
               <option value="Maggi">Maggi</option>
               <option value="Wraps">Wraps</option>
               <option value="Grill Sandwiches">Grill Sandwiches</option>
@@ -38,6 +39,7 @@
               <option value="Sizzlers">Sizzlers</option>
             </select>
           </div>
+
           <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Item Name</label>
             <input
@@ -78,6 +80,7 @@
       </div>
     </div>
   </div>
+
   <div class="col-6">
     <div class="card overflow-scroll" style="height: 30rem">
       <div class="card-body">
@@ -95,10 +98,10 @@
           <tbody>
             {% for item in menu[keys] %}
             <tr>
-              <th scope="row">{{loop.index}}</th>
-              <td>{{menu[item].name}}</td>
-              <td>{{menu[item].category}}</td>
-              <td>{{menu[item].price}}</td>
+              <!-- <th scope="row">{{loop.index}}</th> -->
+              <td>{{menu[keys].name}}</td>
+              <td>{{menu[keys].category}}</td>
+              <td>{{menu[keys].price}}</td>
               <td>
                 <i
                   class="fa fa-trash-alt text-danger"
@@ -113,6 +116,7 @@
     </div>
   </div>
 </div>
+
 <script>
   async function delete_menu(item) {
     console.log("hi");

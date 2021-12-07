@@ -17,7 +17,7 @@
 <hr />
 {% if orders %}
 <div class="accordion accordion-flush" id="menuItems">
-  {% for id in orders.keys() %}
+  {% for id in orders[keys] %}
   <div class="accordion-item">
     <h2 class="accordion-header" id="items_{{loop.index}}">
       <button
@@ -53,7 +53,7 @@
                 </thead>
                 <tbody>
                   {% for item in orders[id].order %} {% if 'entry_fee' in
-                  item.keys() %}
+                  item[keys] %}
                   <tr>
                     <th scope="row">{{loop.index}}</th>
                     <td>Entry Fee</td>
