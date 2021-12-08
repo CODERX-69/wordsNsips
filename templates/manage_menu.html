@@ -17,8 +17,8 @@
 
               <option selected>Select Category</option>
 
-              <option value="Pizza">Pizza</option>
               <option value="Maggi">Maggi</option>
+              <option value="Pizza">Pizza</option>
               <option value="Wraps">Wraps</option>
               <option value="Grill Sandwiches">Grill Sandwiches</option>
               <option value="Plain Sandwiches">Plain Sandwiches</option>
@@ -83,7 +83,7 @@
               <td>{{item.category}}</td>
               <td>{{item.price}}</td>
               <td>
-                <i class="fa fa-trash-alt text-danger" onclick="delete_menu/(`{{item.menu_id}}`)"></i>
+                <i class="fa fa-trash-alt text-danger" onclick="delete_menu(`{{item}}`)"></i>
               </td>
             </tr>
             {% endfor %}
@@ -97,10 +97,10 @@
 <script>
   async function delete_menu(item) {
     console.log("hi");
-    const res_list = await fetch(`/delete_menu/${item}`, {
+    const res = await fetch(`/delete_menu/${item}`, {
       method: "GET",
     });
-    const data = await res_list.json();
+    const data = await res.json();
     if (data["success"]) {
       window.location.href = "/manage_menu";
     }

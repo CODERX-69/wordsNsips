@@ -40,7 +40,7 @@
 </form>
 {% if orders %}
 <div class="accordion accordion-flush" id="menuItems">
-  {% for id in orders.keys() %}
+  {% for id in orders %}
   <div class="accordion-item">
     <h2 class="accordion-header" id="items_{{loop.index}}">
       <button
@@ -51,8 +51,8 @@
         aria-expanded="false"
         aria-controls="toggle_{{loop.index}}"
       >
-        {{orders[id].order_no}} | {{orders[id].name}} |
-        {{orders[id].start_time}} | {{orders[id].location | capitalize}}
+        {{id.order_no}} | {{id.name}} |
+        {{id.start_time}} | {{id.location | capitalize}}
       </button>
     </h2>
     <div
@@ -75,8 +75,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for item in orders[id].order %} {% if 'entry_fee' in
-                  item.keys() %}
+                  {% for item in orders %} {% if 'entry_fee' in
+                  item %}
                   <tr>
                     <th scope="row">{{loop.index}}</th>
                     <td>Entry Fee</td>
@@ -94,7 +94,7 @@
                 </tbody>
               </table>
               <div class="d-flex justify-content-between">
-                <span> Total: &#8377; {{orders[id].total}} </span>
+                <span> Total: &#8377; {{id.total}} </span>
                 <a href="{{url_for('delete_order', id=id)}}">
                   <button class="btn text-danger">&cross;</button>
                 </a>

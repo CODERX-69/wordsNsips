@@ -78,13 +78,13 @@
       <div class="accordion accordion-flush" id="menuItems">
         {% for category in categories %}
         <div class="accordion-item">
-          <h2 class="accordion-header" id="items_">
+          <h2 class="accordion-header" id="items_{{loop.index}}">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#toggle_" aria-expanded="false" aria-controls="toggle_">
+              data-bs-target="#toggle_{{loop.index}}" aria-expanded="false" aria-controls="toggle_{{loop.index}}">
               {{category}}
             </button>
           </h2>
-          <div id="toggle_" class="accordion-collapse collapse" aria-labelledby="items_"
+          <div id="toggle_{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="items_{{loop.index}}"
             data-bs-parent="#menuItems">
             <div class="accordion-body">
               <ul class="row">
@@ -112,7 +112,7 @@
                     </div>
                   </div>
                 </li>
-                 {% endfor %}
+            {% endfor %}
               </ul>
             </div>
           </div>
@@ -120,8 +120,6 @@
         {% endfor %}
       </div>
     </div>
-    
-    
     <footer class="footer mt-auto fixed-bottom text-center py-3 bg-light">
       <div class="container">
         <span class="text-muted">Copyright &copy; Words & Sips</span>
