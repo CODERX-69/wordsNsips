@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 
@@ -76,19 +75,24 @@
         Welcome to Words and Sips Book Cafe
       </h1>
       <div class="accordion accordion-flush" id="menuItems">
-        {% for category in categories %}
+        {{categories}}
         <div class="accordion-item">
-          <h2 class="accordion-header" id="items_{{loop.index}}">
+          <h2 class="accordion-header" id="items_">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#toggle_{{loop.index}}" aria-expanded="false" aria-controls="toggle_{{loop.index}}">
-              {{category}}
+              data-bs-target="#toggle_" aria-expanded="false" aria-controls="toggle_">
+              <img src="/static/images/burger.jfif" alt="" style="height: 50px; width: 50px; margin-right: 20px;">
+              {{categories.name}}
+              <!-- For loop Removed -->
+
             </button>
           </h2>
-          <div id="toggle_{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="items_{{loop.index}}"
+          <div id="toggle_" class="accordion-collapse collapse" aria-labelledby="items_"
             data-bs-parent="#menuItems">
             <div class="accordion-body">
               <ul class="row">
-                {% for item in menu %} 
+                {% for item in menu %}
+                {% if menu.category
+                ==category %}
                 <li class="col-6">
                   <div class="card m-2 rounded-lg p-2">
                     <div class="card-body">
@@ -101,8 +105,7 @@
                                     fas
                                     fa-shopping-basket
                                     text-danger
-                                    mx-3
-                                  " style="font-size: 1.5em; cursor: pointer">
+                                    mx-3" style="font-size: 1.5em; cursor: pointer">
                               </i>
                             </a>
                           </button>
@@ -112,12 +115,12 @@
                     </div>
                   </div>
                 </li>
-            {% endfor %}
+                {% endif %} {% endfor %}
               </ul>
             </div>
           </div>
         </div>
-        {% endfor %}
+
       </div>
     </div>
     <footer class="footer mt-auto fixed-bottom text-center py-3 bg-light">

@@ -5,12 +5,13 @@
 <hr />
 
 <div class="row">
-  {% if orders %} {% for id in orders %}
+  {% if orders %} 
+    {% for id in orders %}
   <div class="col-4" id="print_{{_id}}">
     <div class="card m-2 overflow-scroll" style="height: 20rem">
       <div class="card-body">
         <h5 class="card-title">
-          {{id.name}} |
+          {{id.order_no}} | {{id.name}} |
           {{id.start_time}} | Table {{id.table}} |
           {{id.location | capitalize}} 
         </h5>
@@ -24,12 +25,12 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in orders %} {% if 'entry_fee' in item
+            {% for item in orders %} {% if "entry_fee" in orders 
             %}
             <tr>
               <th scope="row">Items</th>
               <td>Entry Fee</td>
-              <td>{{item.quantity}}</td>
+              <td>{{orders.quantity}}</td>
               <td>{{item.entry_fee}}</td>
             </tr>
             {% else %}
