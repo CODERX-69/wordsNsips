@@ -38,7 +38,6 @@
               </div>
             </div>
             {% for item in cart %}
-
             <div class="row border-top border-bottom">
               <div class="row main align-items-center p-4">
                 <div class="col">
@@ -48,7 +47,7 @@
                 <div class="col">
                   <div class="row">
                     <div class="col mt-2">
-                      {% if item.quantity==1 %}
+                      {% if item.quantity == 1 %}
                       <span
                         class="text-black text-decoration-none disabled"
                         style="cursor: pointer"
@@ -62,6 +61,7 @@
                       >
                         &minus;
                       </a>
+                      
                       {% endif %}
                     </div>
                     <div class="col">
@@ -70,8 +70,7 @@
                     <div class="col mt-2">
                       <a
                         class="text-black text-decoration-none"
-                        href="{{url_for('update_product_quantity', product_id=item.product_id, quantity=item.quantity+1)}}"
-                      >
+                        href="{{url_for('update_product_quantity', product_id=item.product_id, quantity=item.quantity+1)}}">
                         &plus;
                       </a>
                     </div>
@@ -81,8 +80,7 @@
                   <span> &#8377; {{item.amount}}</span>
                   <a
                     href="{{url_for('remove_from_cart', product_id=item.product_id)}}"
-                    class="close ms-3 fs-5 text-danger text-decoration-none"
-                  >
+                    class="close ms-3 fs-5 text-danger text-decoration-none">
                     &cross;
                   </a>
                 </div>

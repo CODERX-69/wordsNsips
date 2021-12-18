@@ -74,33 +74,29 @@
       <h1 class="display-3 module-title font-alt mb-5">
         Welcome to Words and Sips Book Cafe
       </h1>
+      {% for category in categories %}
       <div class="accordion accordion-flush" id="menuItems">
-        {{categories}}
         <div class="accordion-item">
-          <h2 class="accordion-header" id="items_">
+          <h2 class="accordion-header" id="items_{{loop.index}}">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#toggle_" aria-expanded="false" aria-controls="toggle_">
-              <img src="/static/images/burger.jfif" alt="" style="height: 50px; width: 50px; margin-right: 20px;">
-              {{categories.name}}
-              <!-- For loop Removed -->
-
+              data-bs-target="#toggle_{{loop.index}}" aria-expanded="false" aria-controls="toggle_{{loop.index}}">
+              {{category}}
             </button>
           </h2>
-          <div id="toggle_" class="accordion-collapse collapse" aria-labelledby="items_"
+          <div id="toggle_{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="items_{{loop.index}}"
             data-bs-parent="#menuItems">
             <div class="accordion-body">
               <ul class="row">
                 {% for item in menu %}
-                {% if menu.category
-                ==category %}
+                {% if item.category == category %}
                 <li class="col-6">
                   <div class="card m-2 rounded-lg p-2">
                     <div class="card-body">
                       <span class="d-flex justify-content-between">
                         {{item.name}}
                         <span>
-                          <button class="btn btn-sm">
-                            <a href="{{url_for('add_to_cart', product_id=item)}}">
+                          <button class="btn btn-sm" onclick="//127.0.0.1:5000/add_to_cart/product_id">
+                            <a href="{{url_for('add_to_cart', product_id = item['product_id'])}}">
                               <i class="
                                     fas
                                     fa-shopping-basket
@@ -120,7 +116,7 @@
             </div>
           </div>
         </div>
-
+        {% endfor %}
       </div>
     </div>
     <footer class="footer mt-auto fixed-bottom text-center py-3 bg-light">
