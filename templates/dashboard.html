@@ -5,13 +5,13 @@
 <hr />
 
 <div class="row">
-  {% if orders %}
+{% if orders %}
   {% for id in orders %}
   <div class="col-4" id="print_{{id}}">
     <div class="card m-2 overflow-scroll" style="height: 20rem">
       <div class="card-body">
         <h5 class="card-title">
-          {{id.order_no}} | {{id.name}} |
+          {{id.order_id}} | {{id.name}} |
           {{id.start_time}} | Table {{id.table}} |
           {{id.location | capitalize}}
         </h5>
@@ -25,21 +25,24 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in orders %} {% if "entry_fee" in orders
-            %}
-            <tr>
-              <th scope="row">Items</th>
+            {% for order in id.order %}
+            {% if "entry_fee" in orders %}
+            
+            <!-- <tr>
+              <th scope="row">{{item.name}}</th>
               <td>Entry Fee</td>
               <td>{{orders.quantity}}</td>
               <td>{{item.entry_fee}}</td>
-            </tr>
+            </tr> -->
             {% else %}
             <tr>
-              <td>{{item.name}}</td>
-              <td>{{item.quantity}}</td>
-              <td>{{item.amount}}</td>
+              <td>{{order.name}}</td>
+              <td>{{order.quantity}}</td>
+              <td>{{order.amount}}</td>
             </tr>
-            {% endif %}{% endfor %}
+
+            {% endif %}
+            {% endfor %}
           </tbody>
         </table>
         <div class="text-right">Total: &#8377; {{id.total}}</div>
@@ -49,10 +52,10 @@
           Print
         </button>
         <button class="btn btn-success">
-          <a class="text-white text-decoration-none" href="{{url_for('checkout_order', order_id = order_id)}}">Checkout
+          <a class="text-white text-decoration-none" href="{{url_for('checkout_order', order_id = id.order_id)}}">Checkout
           </a>
         </button>
-        <a class="text-black text-decoration-none" href="{{url_for('add_product', order_id = id)}}">
+        <a class="text-black text-decoration-none" href="{{url_for('add_product', order_id=id)}}">
           <button class="btn btn-outline-secondary">&plus;</button>
         </a>
       </div>

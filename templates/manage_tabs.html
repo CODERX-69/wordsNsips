@@ -52,7 +52,7 @@
         aria-controls="toggle_{{loop.index}}"
       >
         {{id.order_no}} | {{id.name}} |
-        {{id.start_time}} | {{id.location | capitalize}}
+        {{id.start_time}} | {{id.location}} | capitalize}}
       </button>
     </h2>
     <div
@@ -75,27 +75,21 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for item in orders %} {% if 'entry_fee' in
-                  item %}
-                  <tr>
-                    <th scope="row">{{loop.index}}</th>
-                    <td>Entry Fee</td>
-                    <td>{{orders[id].quantity}}</td>
-                    <td>{{item.entry_fee}}</td>
-                  </tr>
+                  {% for order in id.order %}
+                  {% if "entry_fee" in orders %}
                   {% else %}
                   <tr>
                     <th scope="row">{{loop.index}}</th>
-                    <td>{{item.name}}</td>
-                    <td>{{item.quantity}}</td>
-                    <td>{{item.amount}}</td>
+                    <td>{{order.name}}</td>
+                    <td>{{order.quantity}}</td>
+                    <td>{{order.amount}}</td>
                   </tr>
                   {% endif %} {% endfor %}
                 </tbody>
               </table>
               <div class="d-flex justify-content-between">
                 <span> Total: &#8377; {{id.total}} </span>
-                <a href="{{url_for('delete_order', id=id)}}">
+                <a href="{{url_for('delete_order', id = id)}}">
                   <button class="btn text-danger">&cross;</button>
                 </a>
               </div>
