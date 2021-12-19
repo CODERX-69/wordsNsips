@@ -83,7 +83,7 @@
               <td>{{item.category}}</td>
               <td>{{item.price}}</td>
               <td>
-                <i class="fa fa-trash-alt text-danger" onclick="delete_menu(`{{item}}`)"></i>
+                <a href="{{url_for('delete_menu', product_id = item.product_id)}}"><i class="fa fa-trash-alt text-danger"></i></a>
               </td>
             </tr>
             {% endfor %}
@@ -94,17 +94,6 @@
   </div>
 </div>
 
-<script>
-  async function delete_menu(item) {
-    console.log("hi");
-    const res = await fetch(`/delete_menu/${item}`, {
-      method: "GET",
-    });
-    const data = await res.json();
-    if (data["success"]) {
-      window.location.href = "/manage_menu";
-    }
-  }
-</script>
+
 
 {% endblock %}

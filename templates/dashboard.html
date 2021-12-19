@@ -55,7 +55,7 @@
           <a class="text-white text-decoration-none" href="{{url_for('checkout_order', order_id = id.order_id)}}">Checkout
           </a>
         </button>
-        <a class="text-black text-decoration-none" href="{{url_for('add_product', order_id=id)}}">
+        <a class="text-black text-decoration-none" href="{{url_for('add_product', order_id=id.order_id)}}">
           <button class="btn btn-outline-secondary">&plus;</button>
         </a>
       </div>

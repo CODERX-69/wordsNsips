@@ -4,36 +4,16 @@
 <hr />
 <form action="{{url_for('add_member')}}" method="POST" class="col-8 my-4">
   <div class="mb-3 form-floating">
-    <input
-      type="text"
-      class="form-control"
-      id="basic-url"
-      aria-describedby="Name"
-      placeholder="Name"
-      name="name"
-    />
+    <input type="text" class="form-control" id="basic-url" aria-describedby="Name" placeholder="Name" name="name" />
     <label for="basic-url" class="form-label">Name</label>
   </div>
   <div class="mb-3 form-floating">
-    <input
-      type="email"
-      class="form-control"
-      id="basic-url"
-      aria-describedby="Email"
-      placeholder="Email"
-      name="email"
-    />
+    <input type="email" class="form-control" id="basic-url" aria-describedby="Email" placeholder="Email" name="email" />
     <label for="basic-url" class="form-label">Email</label>
   </div>
   <div class="mb-3 form-floating">
-    <input
-      type="password"
-      class="form-control"
-      id="basic-url"
-      aria-describedby="Password"
-      placeholder="Password"
-      name="password"
-    />
+    <input type="password" class="form-control" id="basic-url" aria-describedby="Password" placeholder="Password"
+      name="password" />
     <label for="basic-url" class="form-label">Password</label>
   </div>
   <button type="submit" class="btn btn-success btn-lg">Add</button>
@@ -43,24 +23,15 @@
   {% for id in orders %}
   <div class="accordion-item">
     <h2 class="accordion-header" id="items_{{loop.index}}">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#toggle_{{loop.index}}"
-        aria-expanded="false"
-        aria-controls="toggle_{{loop.index}}"
-      >
-        {{id.order_no}} | {{id.name}} |
-        {{id.start_time}} | {{id.location}} | capitalize}}
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+        data-bs-target="#toggle_{{loop.index}}" aria-expanded="false" aria-controls="toggle_{{loop.index}}">
+        {{id.name}} |
+        {{id.start_time}} | {{id.table}} |
+        {{id.location | capitalize }}
       </button>
     </h2>
-    <div
-      id="toggle_{{loop.index}}"
-      class="accordion-collapse collapse"
-      aria-labelledby="items_{{loop.index}}"
-      data-bs-parent="#menuItems"
-    >
+    <div id="toggle_{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="items_{{loop.index}}"
+      data-bs-parent="#menuItems">
       <div class="accordion-body">
         <ul class="row list-group">
           <li class="col-6 list-group-item">
@@ -75,21 +46,21 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for order in id.order %}
+                  {% for item in id.order %}
                   {% if "entry_fee" in orders %}
                   {% else %}
                   <tr>
                     <th scope="row">{{loop.index}}</th>
-                    <td>{{order.name}}</td>
-                    <td>{{order.quantity}}</td>
-                    <td>{{order.amount}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.quantity}}</td>
+                    <td>{{item.amount}}</td>
                   </tr>
                   {% endif %} {% endfor %}
                 </tbody>
               </table>
               <div class="d-flex justify-content-between">
                 <span> Total: &#8377; {{id.total}} </span>
-                <a href="{{url_for('delete_order', id = id)}}">
+                <a href="{{url_for('delete_order', order_id = id.order_id)}}">
                   <button class="btn text-danger">&cross;</button>
                 </a>
               </div>
@@ -102,4 +73,4 @@
   {% endfor %}
 </div>
 
-{% else %} No Orders to display! {% endif %} {% endblock %}
+{% else %} No Orders to display! {% endif %} {% endblock %}itemitemitem

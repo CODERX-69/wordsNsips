@@ -111,9 +111,9 @@
             </div>
             <hr />
             <div class="row">
-              <div class="col">{{cart | length + 1}} Items</div>
+              <div class="col">{{cart | length }} Items</div>
               <div class="col text-right">
-                &#8377; {{session.cart.cart_total + session.service_charge}}
+                &#8377; {{session.cart.cart_total }}
               </div>
             </div>
 
@@ -123,7 +123,7 @@
             >
               <div class="col">TOTAL PRICE</div>
               <div class="col text-right">
-                &#8377; {{session.cart.cart_total + session.service_charge}}
+                &#8377; {{session.cart.cart_total + session.service_charge}} 
               </div>
             </div>
             <a href="{{url_for('confirm_order')}}">
