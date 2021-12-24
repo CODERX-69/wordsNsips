@@ -57,7 +57,7 @@
                       {% else %}
                       <a
                         class="text-black text-decoration-none disabled"
-                        href="{{url_for('update_product_quantity', product_id=item.product_id, quantity=item.quantity-1)}}"
+                        href="{{url_for('update_quantity', product_id=item.product_id, quantity=item.quantity-1)}}"
                       >
                         &minus;
                       </a>
@@ -70,7 +70,7 @@
                     <div class="col mt-2">
                       <a
                         class="text-black text-decoration-none"
-                        href="{{url_for('update_product_quantity', product_id=item.product_id, quantity=item.quantity+1)}}">
+                        href="{{url_for('update_quantity', product_id=item.product_id, quantity=item.quantity+1)}}">
                         &plus;
                       </a>
                     </div>

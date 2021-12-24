@@ -7,6 +7,8 @@ from functools import wraps
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
+import pandas as pd
+import csv
 
 
 app = Flask(__name__)
@@ -112,14 +114,26 @@ def menu():
 @app.route('/order_history', methods=["GET", "POST"])
 def order_history():
     output = list(mongo.db.orders.find({"status": "CLOSED"}))
-    print(output)
-    return render_template("order_history.html", output=output)
+    total = 0
+    for item in output:
+        total += item['total']
+    return render_template("order_history.html", output=output, total=total)
+
+
+@app.route('/table')
+def table():
+    sheet = list(mongo.db.orders.find({"status": "CLOSED"}))
+    df = pd.DataFrame(sheet)
+    df.to_csv('data.csv')
+    flash("CSV file updates successfuly!", "success")
+    return render_template("order_history.html")
+
 
 
 @app.route('/checkout_order/<int:order_id>', methods=['GET', 'POST'])
 def checkout_order(order_id):
     order = mongo.db.orders.update_one(
-        {'order_id': order_id}, {'$set': {'status': "CLOSED"}}, upsert=True)
+        {'order_id': int(order_id)}, {'$set': {'status': "CLOSED"}}, upsert=True)
     output = list(mongo.db.orders.find({"status": "CLOSED"}))
     return render_template("order_history.html", output=output, order=order)
 
@@ -131,10 +145,29 @@ def checkout():
     cart_dict = session["cart"]["products"]
     cart = []
     total = 0
+    # orders = list(mongo.db.orders.find_one(
+    #     {"type": 'tab', "email": session["email"]}))
+    # if orders:
+    #     for item in orders["order"]:
+    #         print(item)
+    #         cart.append({
+    #             "product_id": item["product_id"],
+    #             "name": item["name"],
+    #             "quantity": item["quantity"],
+    #             "amount": item["amount"],
+    #             "category": item["category"]
+    #         })
+
+    # sejal@abc.com:
+    # {
+    #     "order_id",
+    #     "date"
+    #     "table"
+    # }
+
     for product_id in cart_dict.keys():
         pro = mongo.db.menu.find_one(
             {"product_id": int(product_id)}, {"_id": 0})
-        print(pro)
         cart.append({
             "product_id": product_id,
             "name": pro.get("name"),
@@ -142,56 +175,90 @@ def checkout():
             "amount": int(pro.get("price")) * int(cart_dict[product_id]),
             "category": pro.get("category")
         })
-        total = total + int(pro.get("price")) * int(cart_dict[product_id])
+        total = total + (int(pro.get("price")) * int(cart_dict[product_id]))
     return render_template("checkout.html", cart=cart, total=total)
 
 
 ################################ WILL TELL  ORDER PLACED IF SUCCESSFULL ################################
-@app.route('/confirm_order')
+@ app.route('/confirm_order')
 def confirm_order():
     cart_dict = session["cart"]["products"]
     cart = []
-    for product_id in cart_dict:
-        pro = mongo.db.menu.find_one({"product_id": int(product_id)})
-        amount = int(pro.get("price")) * int(cart_dict[product_id])
-        cart.append({
-            "product_id": product_id,
-            "name": pro.get("name"),
-            "quantity": int(cart_dict[product_id]),
-            "amount": amount,
-            "category": pro.get("category")
-        })
-    order_id = randint(1, 99999)
-    cart.append({
-        "entry_fee": session["service_charge"]
-    })
     total = int(session["service_charge"])
     if int(session["cart"]["cart_total"]) > int(session["service_charge"]):
         total += int(session["cart"]["cart_total"]) - \
             int(session["service_charge"])
+    for product_id in cart_dict:
+        pro = mongo.db.menu.find_one({"product_id": int(product_id)})
+        amount = int(pro.get("price")) * int(cart_dict[product_id])
+        if session['type'] == "customer":
+            cart.append({
+                "product_id": product_id,
+                "name": pro.get("name"),
+                "quantity": int(cart_dict[product_id]),
+                "amount": amount,
+                "category": pro.get("category"),
+                "entry_fee": session["service_charge"],
+                "total":total
+            })
+        else:
+            
+            cart.append({
+                "product_id": product_id,
+                "name": pro.get("name"),
+                "quantity": int(cart_dict[product_id]),
+                "amount": amount,
+                "category": pro.get("category"),
+                "date":  session["start_time"],
+                "entry_fee": session["service_charge"],
+                "total" : total
+            })
+    order_id = randint(1, 99999)
+    # total = int(session["service_charge"])
+    # if int(session["cart"]["cart_total"]) > int(session["service_charge"]):
+    #     total += int(session["cart"]["cart_total"]) - \
+    #         int(session["service_charge"])
     mongo.db.orders.update_one(
-        {'quantity': 'quantity'}, {'$set': {'quantity': session["quantity"]}})
-    res = mongo.db.orders.insert_one({
-        "name": session["name"],
-        "order_id": order_id,
-        "order": cart,
-        "total": total,
-        'location': session["location"],
-        "start_time": session["start_time"],
-        "status": "OPEN",
-        "table": session["table"],
-        "type": session["type"]
-    })
+        {'order_id': order_id}, {'$set': {'quantity': session["quantity"]}})
+    if session["type"] == "customer":
+        res = mongo.db.orders.insert_one({
+            "name": session["name"],
+            "order_id": order_id,
+            "order": cart,
+            "total": total,
+            'location': session["location"],
+            "start_time": session["start_time"],
+            "status": "OPEN",
+            "table": session["table"],
+            "type": session["type"]
+        })
+
+    elif session["type"] == "tab":
+        em = mongo.db.orders.find_one({"email": session["email"]})
+        cart_total = 0
+        if em:
+            mongo.db.orders.update_one({"email": session["email"]}, {
+                "$push": {"order": {"$each": cart}}}, upsert =True)
+        else:
+            res = mongo.db.orders.insert_one({
+                "name": session["name"],
+                "order_id": order_id,
+                "order": cart,
+                "total": total,
+                "status": "OPEN",
+                "type": session["type"],
+                "email": session["email"]
+            })
+            session["cart"]
     session["cart"] = {"products": {}, "cart_total": 0}
     session["service_charge"] = 0
-    print(res)
     flash("Order placed", "success")  # successfully placed order
     return redirect(url_for("menu"))
 
 
 ############# FOR ADMIN TO ADD / DELETE MENU ITEMS FOR CUSTOMERS ##############################
-@app.route('/admin/dashboard',  methods=['GET', 'POST'])
-@is_admin
+@ app.route('/admin/dashboard',  methods=['GET', 'POST'])
+@ is_admin
 def dashboard():
     orders = list(mongo.db.orders.find({'status': 'OPEN'}))
     return render_template("dashboard.html", orders=orders)
@@ -199,7 +266,7 @@ def dashboard():
     ############# FOR ADMIN TO ADD / DELETE MENU ITEMS FOR CUSTOMERS ##############################
 
 
-@app.route('/manage_menu', methods=['GET', 'POST'])
+@ app.route('/manage_menu', methods=['GET', 'POST'])
 def manage_menu():
     if request.method == "POST":
         category = request.form.get("category")
@@ -220,46 +287,38 @@ def manage_menu():
     return render_template("manage_menu.html", menu=menu)
 
 
-################## To  delete user data from that day after verifying daily collection ################
-
-
-@app.route('/delete_users')
-def delete_users():
-    users = mongo.db.users.find()
-    if users:
-        for id in users:
-            mongo.db.users.delete(
-                f"users/{id}") if users[id]["type"] == 'customer' else None
-        flash("deleted", "success")
-
-    else:
-        flash("No users", "info")
-    return redirect(url_for("order_history"))
-
-
 ################## To  delete Order data from that day after calculating daily collection ################
-@app.route('/delete_orders')
+@ app.route('/delete_orders')
 def delete_orders():
     orders = list(mongo.db.orders.find())
     if orders:
-        for id in orders:
-            mongo.db.orders.remove({'_id': {"$in": orders}})
-            flash("deleted", "success")
+        mongo.db.orders.delete_many({"status": "CLOSED"})
+
     else:
         flash("No orders", "info")
     return redirect(url_for("order_history"))
 
 
-@app.route('/manage_tabs')
-@is_logged_in
+@ app.route('/manage_tabs')
+@ is_logged_in
 def manage_tabs():
-    orders = mongo.db.users.find_one({"type": "tab"})
+    orders = list(mongo.db.orders.find({"type": "tab"}))
     return render_template("manage_tabs.html", orders=orders)
 
 
+# @app.route('/menu', methods=["GET", "POST"])
+# def menu():
+#     menu = list(mongo.db.menu.find())
+#     categories = {}
+#     categories = set()
+#     for item in menu:
+#         categories.add(item['category'])
+#     print(categories)
+#     return render_template("menu.html", menu=menu, categories=categories)
+
 ############ ADMIN LOGOUT #############################
-@app.route('/admin/logout/')
-@is_logged_in
+@ app.route('/admin/logout/')
+@ is_logged_in
 def logout():
     if 'logged_in' in session:
         session.clear()
@@ -270,18 +329,18 @@ def logout():
         return redirect(url_for('login'))
 
 
-@app.route('/remove_from_cart/<int:product_id>')
+@ app.route('/remove_from_cart/<int:product_id>')
 def remove_from_cart(product_id):
     product = mongo.db.menu.find_one({"product_id": int(product_id)})
     price = product["price"]
-    session["cart"]["cart_total"] -= int(price) * \
-        int(session["cart"]["products"][int(product_id)])
-    del session["cart"]["products"][product_id]
+    session["cart"]["cart_total"] -= (int(price) *
+                                      int(session["cart"]["products"][str(product_id)]))
+    session["cart"]["products"].pop(str(product_id))
     flash("Item deleted from cart!", "info")
     return redirect(url_for("checkout"))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@ app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
         email = request.form.get("email")
@@ -307,9 +366,9 @@ def login():
     return render_template("login.html")
 
 
-@app.route('/add_product/<string:order_id>')
+@ app.route('/add_product/<string:order_id>')
 def add_product(order_id):
-    all_order = mongo.db.orders.find_one({"order_id": order_id})
+    all_order = mongo.db.orders.find_one({"order_id": int(order_id)})
     print(all_order)
     orders = all_order["order"]
     print(all_order)
@@ -329,34 +388,29 @@ def add_product(order_id):
         orders.append(pro)
         all_order["total"] += 20
     print(orders)
-    res = mongo.db.orders.update({"$set": {"order_id": all_order["order_id"]}})
-
-    flash("Product addedd successfully", "success")
+    res = mongo.db.orders.update_one({"order_id": int(order_id)}, {
+                                     "$set": {"order": orders, "total": all_order["total"]}})
+    flash("Product added successfully", "success")
     return redirect(url_for("dashboard", res=res))
 
 
-@app.route("/update_quantity/<int:product_id>/<quantity>")
-def update_product_quantity(product_id, quantity):
+@ app.route("/update_quantity/<int:product_id>/<quantity>")
+def update_quantity(product_id, quantity):
     if "cart" in session:
-        print("OLD CART:", session["cart"])
         product_dict = session["cart"]["products"]
         product_dict[str(product_id)] = int(quantity)
         cart_total = 0
-        print("LET'S SEE! ", session["cart"]["products"])
-        print(product_dict)
-        for product in product_dict:
+        for product_id, quantity in product_dict.items():
             product = mongo.db.menu.find_one({"product_id": int(product_id)})
             price = product["price"]
             cart_total += int(price) * int(quantity)
         session["cart"]["cart_total"] = cart_total
-        print("NEW CART:", session["cart"])
-        # product_id = str(product_id)
         session["cart"] = {"products": product_dict, "cart_total": cart_total}
         flash("Quantity updated!", "info")
     return redirect(url_for("checkout"))
 
 
-@app.route("/delete_menu/<int:product_id>")
+@ app.route("/delete_menu/<int:product_id>")
 def delete_menu(product_id):
     print(id)
     res = mongo.db.menu.remove({"product_id": product_id})
@@ -364,16 +418,19 @@ def delete_menu(product_id):
     return redirect(url_for("manage_menu", res=res))
 
 
-@app.route('/delete_order/<int:order_id>')
+@ app.route('/delete_order/<int:order_id>')
 def delete_order(order_id):
-    mongo.db.orders.remove({"order_id": int(order_id)})
+    mongo.db.orders.remove({"order_id": order_id})
     return redirect(url_for("order_history"))
 
 
+@ app.route('/delete_order_tab/<int:order_id>')
+def delete_order_tab(order_id):
+    mongo.db.orders.remove({"order_id": order_id})
+    return redirect(url_for("manage_tabs"))
 
 
-
-@app.route('/add_member', methods=["GET", "POST"])
+@ app.route('/add_member', methods=["GET", "POST"])
 def add_member():
     name = request.form.get("name")
     email = request.form.get("email")
@@ -388,7 +445,7 @@ def add_member():
     return redirect(url_for("manage_tabs"))
 
 
-@app.route('/add_to_cart/<int:product_id>')
+@ app.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
     print(type(product_id))
     print(product_id)
@@ -424,21 +481,20 @@ def add_to_cart(product_id):
 @app.route('/tab_checkin', methods=['GET', 'POST'])
 def tab_checkin():
     if request.method == "POST":
-        location = request.form['location']
         table = request.form['table']
         quantity = int(request.form['quantity'])
         start_time = request.form['start_time']
         mongo.db.users.insert_one({
             "name": session["name"],
             "type": 'tab',
-            "location": location,
             "table": table,
             "quantity": quantity,
-            "start_time": start_time
+            "start_time": start_time,
+            "order_id": randint(1, 99999),
+            "email": session["email"]
         })
         results = mongo.db.users.find_one({"type": 'tab'})
         session["id"] = results["name"]
-        session['location'] = location
         session['table'] = table
         session["cart"] = {"products": {}, "cart_total": 0}
         session["quantity"] = quantity

@@ -4,12 +4,15 @@
   <h3>Order History</h3>
   <span>
     <span>Total: &#8377; {{total}}</span>
-    <a href="{{url_for('delete_users')}}">
-      <button class="btn btn-secondary">Delete all users</button>
-    </a>
+  
     <span>
       <a href="{{url_for('delete_orders')}}">
         <button class="btn btn-secondary">Delete all orders</button>
+      </a>
+    </span>
+    <span>
+      <a href="{{url_for('table')}}">
+        <button class="btn btn-secondary">CSV</button>
       </a>
     </span>
   </span>
@@ -44,12 +47,12 @@
                 <tbody>
                   {% for item in id.order %} {% if 'entry_fee' in
                   item %}
-                  <!-- <tr>
+                  <tr>
                     <th scope="row">{{loop.index}}</th>
-                    <td>Entry Fee</td>
+                    <td>{{item.name}}</td>
                     <td>{{item.quantity}}</td>
-                    <td>{{item.total}}</td>
-                  </tr> -->
+                    <td>{{item.amount}}</td>
+                  </tr>
                   {% else %}
                   <tr>
                     <th scope="row">{{loop.index}}</th>
